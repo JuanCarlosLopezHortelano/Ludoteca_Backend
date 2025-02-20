@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class AuthorServiceImpl implements AuthorService {
@@ -34,7 +36,7 @@ public class AuthorServiceImpl implements AuthorService {
             author = new Author();
 
         } else {
-            author = this.authorRepository.findById(id).orElse(null);
+            author = this.get(id);
         }
 
         BeanUtils.copyProperties(data, author, "id");
@@ -46,11 +48,21 @@ public class AuthorServiceImpl implements AuthorService {
      */
     @Override
     public void delete(Long id) throws Exception {
-        if (this.authorRepository.findById(id).orElse(null) == null) {
+        if (this.get(id) == null) {
             throw new Exception("Not exists");
         }
 
         this.authorRepository.deleteById(id);
+    }
+
+    @Override
+    public Author get(Long id) {
+        return this.authorRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Author> findAll() {
+        return (List<Author>) this.authorRepository.findAll();
     }
 
 }
