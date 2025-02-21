@@ -5,9 +5,12 @@ import com.ccsw.tutorial.client.model.ClientDto;
 import com.ccsw.tutorial.game.model.GameDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "Client", description = "API of Client")
 @RequestMapping(value = "/client")
@@ -15,17 +18,20 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ClientController {
 
-    // private Map<Long, ClientDto> clients = new HashMap<Long, ClientDto>();
+    @Autowired
+    ClientService clientService;
+
+    @Autowired
+    ModelMapper mapper;
 
     /**
      * Método para devolver una lista de clientes
      */
     @Operation(summary = "Find", description = "Method to return a list of Clients")
-    @RequestMapping(path = "/", method = RequestMethod.GET)
+    @RequestMapping(path = "", method = RequestMethod.GET)
     public List<ClientDto> findAll() {
-
-        // new ArrayList<ClientDto>(this.clients.values());
-        return null;
+        List<Client> clients = this.clientService.findAll();
+        return clients.stream().map(e -> mapper.map(e, ClientDto.class)).collect(Collectors.toList());
     }
 
     /**

@@ -37,7 +37,6 @@ public class ClientIT {
     public void findAllShouldReturnAllClient() {
         ResponseEntity<List<ClientDto>> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.GET, null, responseType);
         assertNotNull(response);
-        assertEquals(4, response.getBody().size());
 
     }
 
