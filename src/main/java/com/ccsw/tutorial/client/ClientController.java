@@ -2,7 +2,6 @@ package com.ccsw.tutorial.client;
 
 import com.ccsw.tutorial.client.model.Client;
 import com.ccsw.tutorial.client.model.ClientDto;
-import com.ccsw.tutorial.game.model.GameDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
@@ -40,9 +39,9 @@ public class ClientController {
      */
     @Operation(summary = "Save or Update", description = "Method to return a list of Clients")
     @RequestMapping(path = { "", "/{id}" }, method = RequestMethod.PUT)
-    public void save(@PathVariable(name = "id", required = false) Long id, @RequestBody GameDto dto) {
+    public void save(@PathVariable(name = "id", required = false) Long id, @RequestBody ClientDto dto) {
 
-        //LLAMAR SERVICE
+        clientService.save(id, dto);
 
     }
 
@@ -54,6 +53,17 @@ public class ClientController {
     @Operation(summary = "Delete", description = "Method that deletes a client")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable("id") Long id) throws Exception {
-        // this.clientService.delete(id);
+        this.clientService.delete(id);
     }
+
+    /**
+     * Método para devolver una lista de clientes
+     */
+    @Operation(summary = "Exist", description = "Method to return a Client")
+    @RequestMapping(path = "/{name}", method = RequestMethod.GET)
+    public boolean existName(@PathVariable("name") String name) {
+        Client client = this.clientService.exist(name);
+        return client != null;
+    }
+
 }

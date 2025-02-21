@@ -24,12 +24,22 @@ public interface ClientService {
 
     void save(Long id, ClientDto dto);
 
+    Client exist(String name);
+
     /**
      *Método para eliminar un cliente
      *
      * @param id PK de la entindad
      *
      */
-    void delete(Long id);
+    void delete(Long id) throws Exception;
+
+    /**
+     * Método para recuperar un cliente
+     *
+     * @param id PK de la entindad
+     *
+     */
+    Client get(Long id);
 
 }

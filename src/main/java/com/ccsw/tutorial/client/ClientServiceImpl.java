@@ -21,12 +21,33 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void save(Long id, ClientDto dto) {
-
+    public Client get(Long id) {
+        return this.clientRepository.findById(id).orElse(null);
     }
 
     @Override
-    public void delete(Long id) {
+    public void save(Long id, ClientDto dto) {
+        Client client;
+        if (id == null) {
+            client = new Client();
+        } else {
+            client = get(id);
+        }
 
+        client.setName(dto.getName());
+        clientRepository.save(client);
+    }
+
+    @Override
+    public Client exist(String name) {
+        return this.clientRepository.findByName(name).orElse(null);
+    }
+
+    @Override
+    public void delete(Long id) throws Exception {
+        if (this.get(id) == null) {
+            throw new Exception("No existe");
+        }
+        clientRepository.delete(this.get(id));
     }
 }
