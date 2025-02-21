@@ -16,24 +16,21 @@ public interface CategoryService {
     Category get(Long id);
 
     /**
-     * Metodo para recuperar todas las {@link Category}
+     * Método  para recuperar todas las {@link Category}
      * @return {@link List} de {@link Category}
      */
-
     List<Category> findAll();
 
     /**
-     * Metodo para crear o actualizar una {@link Category}
+     * Método  para crear o actualizar una {@link Category}
      * @param id PK de la entidad
      * @param dto datos de la entidad
-     *
      */
     void save(Long id, CategoryDto dto);
 
     /**
-     * Metodo para borrar una {@link Category}
+     * Método  para borrar una {@link Category}
      * @param id PK de la entidad
      */
-
     void delete(Long id) throws Exception;
 }

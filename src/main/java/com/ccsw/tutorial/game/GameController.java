@@ -24,7 +24,7 @@ public class GameController {
     ModelMapper mapper;
 
     /**
-     * Metodo para recuperar una lista de {@link Game}
+     * Método para recuperar una lista de {@link Game}
      *
      *  @param title título del juego
      *  @param idCategory PK de la categoría

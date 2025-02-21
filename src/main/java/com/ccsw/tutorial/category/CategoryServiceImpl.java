@@ -38,7 +38,6 @@ public class CategoryServiceImpl implements CategoryService {
             category = new Category();
         } else {
             category = this.get(id);
-
         }
 
         category.setName(dto.getName());

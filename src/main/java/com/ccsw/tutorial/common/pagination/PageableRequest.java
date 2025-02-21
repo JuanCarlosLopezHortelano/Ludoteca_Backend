@@ -70,7 +70,9 @@ public class PageableRequest implements Serializable {
     public static class SortRequest implements Serializable {
 
         private static final long serialVersionUID = 1L;
+
         private String property;
+
         private Sort.Direction direction;
 
         protected String getProperty() {

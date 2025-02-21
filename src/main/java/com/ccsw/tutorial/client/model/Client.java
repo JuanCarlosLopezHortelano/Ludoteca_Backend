@@ -1,10 +1,10 @@
-package com.ccsw.tutorial.category.model;
+package com.ccsw.tutorial.client.model;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "category")
-public class Category {
+@Table(name = "client")
+public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,11 +18,12 @@ public class Category {
      * @return id
      */
     public Long getId() {
-        return this.id;
+        return id;
     }
 
     /**
      * @param id new value of {@link #getId}
+     *
      */
     public void setId(Long id) {
         this.id = id;
@@ -37,6 +38,7 @@ public class Category {
 
     /**
      * @param name new value of {@link #getName}
+     *
      */
     public void setName(String name) {
         this.name = name;
