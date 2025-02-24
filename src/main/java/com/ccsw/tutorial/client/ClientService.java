@@ -22,7 +22,7 @@ public interface ClientService {
      * @param dto datos de la entidad
      */
 
-    void save(Long id, ClientDto dto);
+    void save(Long id, ClientDto dto) throws Exception;
 
     Client exist(String name);
 

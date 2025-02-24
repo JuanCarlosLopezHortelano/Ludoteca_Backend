@@ -60,6 +60,22 @@ public class ClientIT {
 
     }
 
+    public static final String EXIST_CLIENT_NAME = "Client 1";
+
+    @Test
+    public void saveWithNameRegisteredCreateNewClient() {
+        ClientDto dto = new ClientDto();
+        dto.setName((EXIST_CLIENT_NAME));
+
+        ResponseEntity<?> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+
+        ResponseEntity<List<ClientDto>> response2 = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.GET, null, responseType);
+        assertNotNull(response2);
+        assertEquals(4, response2.getBody().size());
+
+    }
+
     public static final Long MODIFY_CLIENT_ID = 4L;
 
     @Test
@@ -89,6 +105,20 @@ public class ClientIT {
 
     }
 
+    @Test
+    public void modifyWithNameRegisteredModyfyNewClient() {
+        ClientDto dto = new ClientDto();
+        dto.setName((EXIST_CLIENT_NAME));
+
+        ResponseEntity<?> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + "/" + MODIFY_CLIENT_ID, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+
+        ResponseEntity<List<ClientDto>> response2 = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.GET, null, responseType);
+        assertNotNull(response2);
+        assertEquals(4, response2.getBody().size());
+
+    }
+
     public static final Long DELETE_CLIENT_ID = 3L;
 
     @Test
@@ -104,6 +134,22 @@ public class ClientIT {
     public void deleteWithNotExistsIdShouldInternalError() {
         ResponseEntity<?> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + "/" + NEW_CLIENT_ID, HttpMethod.DELETE, null, Void.class);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    public void existWithNameRegisteredShould_ReturnTrue() {
+        ResponseEntity<Boolean> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + "/" + EXIST_CLIENT_NAME, HttpMethod.GET, null, Boolean.class);
+        assertNotNull(response);
+        assertEquals(true, response.getBody());
+    }
+
+    public static final String NOT_EXIST_CLIENT_NAME = "Client 6";
+
+    @Test
+    public void existWithNameNotRegisteredShould_ReturnFalse() {
+        ResponseEntity<Boolean> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH + "/" + NOT_EXIST_CLIENT_NAME, HttpMethod.GET, null, Boolean.class);
+        assertNotNull(response);
+        assertEquals(false, response.getBody());
     }
 
 }

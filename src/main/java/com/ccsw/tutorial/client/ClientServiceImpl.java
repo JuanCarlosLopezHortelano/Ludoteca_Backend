@@ -26,7 +26,11 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void save(Long id, ClientDto dto) {
+    public void save(Long id, ClientDto dto) throws Exception {
+        if (this.exist(dto.getName()) != null) {
+            throw new Exception("El nombre ya esta siendo usado");
+        }
+
         Client client;
         if (id == null) {
             client = new Client();
