@@ -24,18 +24,18 @@ public class PrestamoSpecification implements Specification<Prestamo> {
                 return builder.like(path, "%" + criteria.getValue() + "%");
             } else {
                 return builder.equal(path, criteria.getValue());
-
             }
-
         }
 
-        if (criteria.getOperation().equalsIgnoreCase("between") && criteria.getValue() != null) {
+        if ((criteria.getOperation().equalsIgnoreCase("<=") || criteria.getOperation().equalsIgnoreCase(">=")) && criteria.getValue() != null) {
             LocalDate filterDate = LocalDate.parse((String) criteria.getValue(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-            Path<LocalDate> loanDate = root.get("loanDate");
-            Path<LocalDate> returnDate = root.get("returnDate");
-            System.out.println(loanDate);
-            return builder.and(builder.lessThanOrEqualTo(loanDate, filterDate), builder.greaterThanOrEqualTo(returnDate, filterDate));
+            Path<LocalDate> datePath = root.get(criteria.getKey());
+            if (criteria.getOperation().equalsIgnoreCase("<=")) {
+                return builder.lessThanOrEqualTo(datePath, filterDate);
+            } else {
+                return builder.greaterThanOrEqualTo(datePath, filterDate);
+            }
         }
         return null;
     }

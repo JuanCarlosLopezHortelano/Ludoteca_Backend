@@ -34,11 +34,11 @@ public class PrestamoServiceImpl implements PrestamoService {
 
         PrestamoSpecification gameSpec = new PrestamoSpecification(new SearchCriteria("game.id", ":", id_game));
         PrestamoSpecification clientSpec = new PrestamoSpecification(new SearchCriteria("client.id", ":", id_client));
-        //  PrestamoSpecification dateLoanSpec = new PrestamoSpecification(new SearchCriteria("loanDate", "<", filterDate));
-        //   PrestamoSpecification dateReturnSpec = new PrestamoSpecification(new SearchCriteria("returnDate", ">", filterDate));
-        PrestamoSpecification dateSpec = new PrestamoSpecification(new SearchCriteria("loanDate-returnDate", "between", filterDate));
-        Specification<Prestamo> spec = Specification.where(clientSpec).and(gameSpec).and(dateSpec);
-        System.out.println(dto);
+        PrestamoSpecification dateLoanSpec = new PrestamoSpecification(new SearchCriteria("loanDate", "<=", filterDate));
+        PrestamoSpecification dateReturnSpec = new PrestamoSpecification(new SearchCriteria("returnDate", ">=", filterDate));
+        //PrestamoSpecification dateSpec = new PrestamoSpecification(new SearchCriteria("loanDate-returnDate", "between", filterDate));
+        Specification<Prestamo> spec = Specification.where(clientSpec).and(gameSpec).and(dateLoanSpec).and(dateReturnSpec);
+
         return this.prestamoRepository.findAll(spec, dto.getPageable().getPageable());
 
     }
@@ -74,7 +74,7 @@ public class PrestamoServiceImpl implements PrestamoService {
         if (prestamo.getReturnDate().isAfter(maxReturnDate)) {
             return false;
         }
-        
+
         if (prestamoRepository.countSameClient(prestamo.getGame().getId(), prestamo.getLoanDate(), prestamo.getReturnDate()) > 0) {
             return false;
         }

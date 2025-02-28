@@ -19,9 +19,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,7 +35,9 @@ public class PrestamoIT {
 
     public static final String LOCALHOST = "http://localhost:";
     public static final String SERVICE_PATH = "/prestamo";
-
+    private static final String GAME_ID_PARAM = "id_game";
+    private static final String CLIENT_ID_PARAM = "id_client";
+    private static final String FILTER_DATE_PARAM = "filterDate";
     @LocalServerPort
     private int port;
 
@@ -44,6 +49,22 @@ public class PrestamoIT {
 
     ParameterizedTypeReference<List<PrestamoDto>> responseTypeList = new ParameterizedTypeReference<List<PrestamoDto>>() {
     };
+
+    private String getUrlWithParams(Map<String, Object> params) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(LOCALHOST + port + SERVICE_PATH);
+
+        if (params.get(GAME_ID_PARAM) != null) {
+            builder.queryParam(GAME_ID_PARAM, params.get(GAME_ID_PARAM));
+        }
+        if (params.get(CLIENT_ID_PARAM) != null) {
+            builder.queryParam(CLIENT_ID_PARAM, params.get(CLIENT_ID_PARAM));
+        }
+        if (params.get(FILTER_DATE_PARAM) != null) {
+            builder.queryParam(FILTER_DATE_PARAM, params.get(FILTER_DATE_PARAM));
+        }
+
+        return builder.encode().toUriString();
+    }
 
     private static final int TOTAL_PRESTAMOS = 5;
     public static final Long DELETE_PRESTAMO_ID = 5L;
@@ -149,4 +170,134 @@ public class PrestamoIT {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
+    private static final String EXISTS_CLIENT = "1";
+    private static final String EXISTS_GAME = "1";
+    ParameterizedTypeReference<List<PrestamoDto>> responseType = new ParameterizedTypeReference<List<PrestamoDto>>() {
+    };
+
+    @Test
+    public void findExistsClientShouldReturnPrestamos() {
+        int PRESTAMOS_WITH_FILTERS = 4;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put(GAME_ID_PARAM, null);
+        params.put(FILTER_DATE_PARAM, null);
+        params.put(CLIENT_ID_PARAM, EXISTS_CLIENT);
+
+        PrestamoSearchDto searchDto = new PrestamoSearchDto();
+        searchDto.setPageable(new PageableRequest(0, TOTAL_PRESTAMOS));
+        ResponseEntity<ResponsePage<PrestamoDto>> response = restTemplate.exchange(getUrlWithParams(params), HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
+
+        assertNotNull(response);
+        assertEquals(PRESTAMOS_WITH_FILTERS, response.getBody().getContent().size());
+    }
+
+    private static final String NO_EXISTS_CLIENT = "5";
+
+    @Test
+    public void findNotExistsClientShouldNoReturnPrestamos() {
+        int PRESTAMOS_WITH_FILTERS = 0;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put(GAME_ID_PARAM, null);
+        params.put(FILTER_DATE_PARAM, null);
+        params.put(CLIENT_ID_PARAM, NO_EXISTS_CLIENT);
+
+        PrestamoSearchDto searchDto = new PrestamoSearchDto();
+        searchDto.setPageable(new PageableRequest(0, TOTAL_PRESTAMOS));
+        ResponseEntity<ResponsePage<PrestamoDto>> response = restTemplate.exchange(getUrlWithParams(params), HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
+
+        assertNotNull(response);
+        assertEquals(PRESTAMOS_WITH_FILTERS, response.getBody().getContent().size());
+    }
+
+    @Test
+    public void findExistsGameShouldReturnPrestamos() {
+        int PRESTAMOS_WITH_FILTERS = 4;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put(GAME_ID_PARAM, EXISTS_GAME);
+        params.put(FILTER_DATE_PARAM, null);
+        params.put(CLIENT_ID_PARAM, null);
+
+        PrestamoSearchDto searchDto = new PrestamoSearchDto();
+        searchDto.setPageable(new PageableRequest(0, TOTAL_PRESTAMOS));
+        ResponseEntity<ResponsePage<PrestamoDto>> response = restTemplate.exchange(getUrlWithParams(params), HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
+
+        assertNotNull(response);
+        assertEquals(PRESTAMOS_WITH_FILTERS, response.getBody().getContent().size());
+    }
+
+    private static final String NO_EXISTS_GAME = "5";
+
+    @Test
+    public void findNotExistsGameShouldNoReturnPrestamos() {
+        int PRESTAMOS_WITH_FILTERS = 0;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put(GAME_ID_PARAM, NO_EXISTS_GAME);
+        params.put(FILTER_DATE_PARAM, null);
+        params.put(CLIENT_ID_PARAM, null);
+
+        PrestamoSearchDto searchDto = new PrestamoSearchDto();
+        searchDto.setPageable(new PageableRequest(0, TOTAL_PRESTAMOS));
+        ResponseEntity<ResponsePage<PrestamoDto>> response = restTemplate.exchange(getUrlWithParams(params), HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
+
+        assertNotNull(response);
+        assertEquals(PRESTAMOS_WITH_FILTERS, response.getBody().getContent().size());
+    }
+
+    private static final String EXISTS_FILTER_DATE = "2025-02-28";
+    private static final String NO_EXISTS_FILTER_DATE = "1900-01-01";
+
+    @Test
+    public void findExistsFilterDateShouldReturnPrestamos() {
+        int PRESTAMOS_WITH_FILTERS = 1;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put(GAME_ID_PARAM, null);
+        params.put(FILTER_DATE_PARAM, EXISTS_FILTER_DATE);
+        params.put(CLIENT_ID_PARAM, null);
+
+        PrestamoSearchDto searchDto = new PrestamoSearchDto();
+        searchDto.setPageable(new PageableRequest(0, TOTAL_PRESTAMOS));
+        ResponseEntity<ResponsePage<PrestamoDto>> response = restTemplate.exchange(getUrlWithParams(params), HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
+
+        assertNotNull(response);
+        assertEquals(PRESTAMOS_WITH_FILTERS, response.getBody().getContent().size());
+    }
+
+    @Test
+    public void findNotExistsFilterDateShouldNoReturnPrestamos() {
+        int PRESTAMOS_WITH_FILTERS = 0;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put(GAME_ID_PARAM, null);
+        params.put(FILTER_DATE_PARAM, NO_EXISTS_FILTER_DATE);
+        params.put(CLIENT_ID_PARAM, null);
+
+        PrestamoSearchDto searchDto = new PrestamoSearchDto();
+        searchDto.setPageable(new PageableRequest(0, TOTAL_PRESTAMOS));
+        ResponseEntity<ResponsePage<PrestamoDto>> response = restTemplate.exchange(getUrlWithParams(params), HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
+
+        assertNotNull(response);
+        assertEquals(PRESTAMOS_WITH_FILTERS, response.getBody().getContent().size());
+    }
+
+    @Test
+    public void findExistsAllFilterDateShouldReturnPrestamos() {
+        int PRESTAMOS_WITH_FILTERS = 1;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put(GAME_ID_PARAM, EXISTS_GAME);
+        params.put(FILTER_DATE_PARAM, EXISTS_FILTER_DATE);
+        params.put(CLIENT_ID_PARAM, EXISTS_CLIENT);
+
+        PrestamoSearchDto searchDto = new PrestamoSearchDto();
+        searchDto.setPageable(new PageableRequest(0, TOTAL_PRESTAMOS));
+        ResponseEntity<ResponsePage<PrestamoDto>> response = restTemplate.exchange(getUrlWithParams(params), HttpMethod.POST, new HttpEntity<>(searchDto), responseTypePage);
+
+        assertNotNull(response);
+        assertEquals(PRESTAMOS_WITH_FILTERS, response.getBody().getContent().size());
+    }
 }
