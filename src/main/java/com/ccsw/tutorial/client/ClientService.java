@@ -34,12 +34,6 @@ public interface ClientService {
      */
     void delete(Long id) throws Exception;
 
-    /**
-     * Método para recuperar un cliente
-     *
-     * @param id PK de la entindad
-     *
-     */
     Client get(Long id);
 
 }

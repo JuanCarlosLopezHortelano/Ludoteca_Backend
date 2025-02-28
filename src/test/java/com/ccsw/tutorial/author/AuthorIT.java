@@ -147,7 +147,7 @@ public class AuthorIT {
     }
 
     @Test
-    public void deleteWithExistsIdShouldDeleteCategory() {
+    public void deleteWithExistsIdShouldDeleteAuthor() {
 
         long newAuthorsSize = TOTAL_AUTHORS - 1;
 

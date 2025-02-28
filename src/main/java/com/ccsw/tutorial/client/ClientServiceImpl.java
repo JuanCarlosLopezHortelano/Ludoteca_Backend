@@ -52,6 +52,7 @@ public class ClientServiceImpl implements ClientService {
         if (this.get(id) == null) {
             throw new Exception("No existe");
         }
-        clientRepository.delete(this.get(id));
+        clientRepository.deleteById(id);
     }
+
 }
