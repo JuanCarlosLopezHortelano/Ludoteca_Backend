@@ -68,11 +68,14 @@ public class PrestamoIT {
 
     private static final int TOTAL_PRESTAMOS = 5;
     public static final Long DELETE_PRESTAMO_ID = 5L;
-    public static final Long MODIFY_AUTHOR_ID = 3L;
-    public static final String NEW_AUTHOR_NAME = "Nuevo Autor";
-    public static final String NEW_NATIONALITY = "Nueva Nacionalidad";
 
     private static final int PAGE_SIZE = 5;
+    private static final String EXISTS_CLIENT = "1";
+    private static final String EXISTS_GAME = "1";
+    private static final String NO_EXISTS_CLIENT = "5";
+    private static final String NO_EXISTS_GAME = "5";
+    private static final String EXISTS_FILTER_DATE = "2025-02-28";
+    private static final String NO_EXISTS_FILTER_DATE = "1900-01-01";
 
     @Test
     public void findFirstPageWithFiveSizeShouldReturnFirstFiveResults() {
@@ -170,11 +173,6 @@ public class PrestamoIT {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
-    private static final String EXISTS_CLIENT = "1";
-    private static final String EXISTS_GAME = "1";
-    ParameterizedTypeReference<List<PrestamoDto>> responseType = new ParameterizedTypeReference<List<PrestamoDto>>() {
-    };
-
     @Test
     public void findExistsClientShouldReturnPrestamos() {
         int PRESTAMOS_WITH_FILTERS = 4;
@@ -191,8 +189,6 @@ public class PrestamoIT {
         assertNotNull(response);
         assertEquals(PRESTAMOS_WITH_FILTERS, response.getBody().getContent().size());
     }
-
-    private static final String NO_EXISTS_CLIENT = "5";
 
     @Test
     public void findNotExistsClientShouldNoReturnPrestamos() {
@@ -228,8 +224,6 @@ public class PrestamoIT {
         assertEquals(PRESTAMOS_WITH_FILTERS, response.getBody().getContent().size());
     }
 
-    private static final String NO_EXISTS_GAME = "5";
-
     @Test
     public void findNotExistsGameShouldNoReturnPrestamos() {
         int PRESTAMOS_WITH_FILTERS = 0;
@@ -246,9 +240,6 @@ public class PrestamoIT {
         assertNotNull(response);
         assertEquals(PRESTAMOS_WITH_FILTERS, response.getBody().getContent().size());
     }
-
-    private static final String EXISTS_FILTER_DATE = "2025-02-28";
-    private static final String NO_EXISTS_FILTER_DATE = "1900-01-01";
 
     @Test
     public void findExistsFilterDateShouldReturnPrestamos() {
